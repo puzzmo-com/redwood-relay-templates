@@ -1,8 +1,16 @@
 import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
 import cuid from "cuid"
 import { dnull } from "dnull"
-import { hasRole } from "src/lib/auth"
+import {
+  ${singularPascalName}Resolver,
+  ${pluralPascalName}WhereResolver,
+  Create${singularPascalName}Resolver,
+  Update${singularPascalName}Resolver,
+  Delete${singularPascalName}Resolver
+} from "types/${pluralCamelName}"
 
+
+import { hasRole } from "src/lib/auth"
 import { db } from 'src/lib/db'
 
 /** TODO: This needs to go in object identification, and ensure its all lowercase
@@ -17,12 +25,12 @@ import { delete${singularPascalName}, puzzle${singularPascalName} } from "../${p
 
 */
 
-export const ${singularCamelName} = (args) => {
+export const ${singularCamelName}: ${singularPascalName}Resolver = (args) => {
   const query = args.id.length > 10 ? { id: args.id } : { slug: args.id }
   return db.${singularCamelName}.findUnique({ where: query })
 }
 
-export const ${pluralCamelName}Where = (outerArgs) => {
+export const ${pluralCamelName}Where: ${pluralPascalName}WhereResolver = (outerArgs) => {
   const useWhere = outerArgs.where && typeof outerArgs.where === "object"
   const where = useWhere ? (outerArgs.where as any) : undefined
 
@@ -39,7 +47,7 @@ export const ${pluralCamelName}Where = (outerArgs) => {
   )
 }
 
-export const create${singularPascalName} = async (args) => {
+export const create${singularPascalName}: Create${singularPascalName}Resolver = async (args) => {
   const { input } = args
   try {
     return db.${singularCamelName}.create({
@@ -55,7 +63,7 @@ export const create${singularPascalName} = async (args) => {
 }
 
 
-export const update${singularPascalName} = (args) => {
+export const update${singularPascalName}: Update${singularPascalName}Resolver = (args) => {
   const { id, input } = args
   try {
     return db.${singularCamelName}.update({
@@ -67,7 +75,7 @@ export const update${singularPascalName} = (args) => {
   }
 }
 
-export const delete${singularPascalName} = (args) => {
+export const delete${singularPascalName}: Delete${singularPascalName}Resolver = (args) => {
   const isAdmin = hasRole({ roles: "admin" })
   if (!isAdmin) throw new Error("Only admins can delete")
 

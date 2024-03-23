@@ -1,7 +1,8 @@
 # redwood-relay-templates
 
 Production copies of [generator templates](https://redwoodjs.com/docs/cli-commands#generate-alias-g) for Redwood with:
- 
+
+- TypeScript only
 - Relay for data fetching client-side
 - Conforming to the [Object Identification](https://graphql.org/learn/global-object-identification/) GraphQL pattern
 - Using Redwood forms for the create/edit form
