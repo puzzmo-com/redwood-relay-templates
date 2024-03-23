@@ -1,0 +1,83 @@
+import { graphql, usePaginationFragment, useLazyLoadQuery } from "react-relay"
+
+import { AvailableRoutes, Link, routes } from "@redwoodjs/router"
+
+import { ${pluralPascalName}PageConnection$key } from "src/__generated__/${pluralPascalName}PageConnection.graphql"
+import { ${pluralPascalName}PageQuery } from "src/__generated__/${pluralPascalName}PageQuery.graphql"
+import { DeleteNodeButton } from "src/components/Admin/ui/DeleteNodeButton"
+import { SummaryTable } from "src/components/Admin/ui/SummaryTable"
+
+const ${pluralPascalName}Query = graphql`
+  query ${pluralPascalName}PageQuery($cursor: String, $first: Int = 10) {
+    ...${pluralPascalName}PageConnection
+  }
+`
+
+const ${pluralPascalName}Connection = graphql`
+  fragment ${pluralPascalName}PageConnection on Query @refetchable(queryName: "${pluralCamelName}PageQueryRefetch") {
+    ${pluralCamelName}Where(first: $first, after: $cursor) @connection(key: "${pluralCamelName}PageConnection_${pluralCamelName}Where") {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+      }
+      edges {
+        node {
+          id
+          slug
+        }
+      }
+    }
+  }
+`
+
+type PageParams = Parameters<AvailableRoutes["admin${pluralPascalName}"]>[0]
+
+const ${pluralPascalName}List = (_params: PageParams) => {
+  const res = useLazyLoadQuery<${pluralPascalName}PageQuery>(${pluralPascalName}Query, { first: 100 })
+  const connection = usePaginationFragment<${pluralPascalName}PageQuery, ${pluralPascalName}PageConnection$key>(${pluralPascalName}Connection, res)
+
+  const titles = ["id", "slug"]
+
+  const data = connection.data.${pluralCamelName}Where.edges.map((edge) => {
+    const ${singularCamelName} = edge.node
+    return [${singularCamelName}.id, ${singularCamelName}.slug]
+  })
+
+  const ${singularCamelName} = (i) => connection.data.${pluralCamelName}Where.edges[i].node
+
+  return (
+    <div>
+      <Link to={routes.adminNew${singularPascalName}()} className="rw-link">
+        Create ${singularPascalName}
+      </Link>
+
+      <SummaryTable
+        titles={titles}
+        data={data}
+        buttons={(i) => (
+          <>
+            <Link
+              to={routes.admin${singularPascalName}({ id: ${singularCamelName}(i).id })}
+              title={"Show ${singularCamelName} " + ${singularCamelName}(i).id + " detail"}
+              className="rw-button rw-button-small"
+            >
+              Show
+            </Link>
+            <Link
+              to={routes.adminEdit${singularPascalName}({ id: ${singularCamelName}(i).id })}
+              title={"Edit ${singularCamelName} " + ${singularCamelName}(i).id}
+              className="rw-button rw-button-small rw-button-blue"
+            >
+              Edit
+            </Link>
+            <DeleteNodeButton id={${singularCamelName}(i).id} />
+          </>
+        )}
+      />
+
+      {connection.hasNext && <button onClick={() => connection.loadNext(10)}>Load more ${singularCamelName}</button>}
+    </div>
+  )
+}
+
+export default ${pluralPascalName}List

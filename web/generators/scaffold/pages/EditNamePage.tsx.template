@@ -1,0 +1,87 @@
+import { useState } from "react"
+
+import { graphql, useLazyLoadQuery, useMutation } from "react-relay"
+
+import { AvailableRoutes, navigate, routes } from "@redwoodjs/router"
+
+import type { Edit${singularPascalName}PageMutation } from "src/__generated__/Edit${singularPascalName}PageMutation.graphql"
+import type { Edit${singularPascalName}PageNewMutation } from "src/__generated__/Edit${singularPascalName}PageNewMutation.graphql"
+import type { Edit${singularPascalName}PageQuery } from "src/__generated__/Edit${singularPascalName}PageQuery.graphql"
+import ${singularPascalName}Form from "src/components/Admin/${singularPascalName}/${singularPascalName}Form"
+
+const Edit${singularPascalName}PageReq = graphql`
+  query Edit${singularPascalName}PageQuery($id: ID!) {
+    ${singularCamelName}(id: $id) {
+      ...${singularPascalName}Form_${singularCamelName}
+    }
+  }
+`
+
+const EditMutation = graphql`
+  mutation Edit${singularPascalName}PageMutation($id: ID!, $input: Update${singularPascalName}Input!) {
+    update${singularPascalName}(id: $id, input: $input) {
+      ... on ${singularPascalName} {
+        id
+        ...${singularPascalName}Form_${singularCamelName}
+      }
+      ... on ErrorableResponse {
+        message
+      }
+    }
+  }
+`
+
+const CreateMutation = graphql`
+  mutation Edit${singularPascalName}PageNewMutation($input: Create${singularPascalName}Input!) {
+    create${singularPascalName}(input: $input) {
+      ... on ${singularPascalName} {
+        id
+        ...${singularPascalName}Form_${singularCamelName}
+      }
+
+      ... on ErrorableResponse {
+        message
+      }
+    }
+  }
+`
+
+type PageParams = Parameters<AvailableRoutes["adminEdit${singularPascalName}"]>[0]
+const Edit${singularPascalName}Page = ({ id }: PageParams) => {
+  const [error, setError] = useState<Error>(undefined)
+  const [commitEdit, editLoading] = useMutation<Edit${singularPascalName}PageMutation>(EditMutation)
+  const [commitCreate, createLoading] = useMutation<Edit${singularPascalName}PageNewMutation>(CreateMutation)
+
+  const isNew = id === "new"
+  const mutation = isNew ? commitCreate : commitEdit
+
+  const onSave = (input) =>
+    mutation({
+      variables: { id, input },
+      onCompleted: (e) => {
+        if ("create${singularPascalName}" in e) {
+          navigate(routes.adminEdit${singularPascalName}({ id: e.create${singularPascalName}.id }))
+        } else {
+          document.location.reload()
+        }
+      },
+      onError: setError,
+    })
+
+  // The 'new' ID will fail and give a null, which is accurate for creating a new one
+  const data = useLazyLoadQuery<Edit${singularPascalName}PageQuery>(Edit${singularPascalName}PageReq, { id })
+
+  const loading = editLoading || createLoading
+  return (
+    <div >
+      <header >
+        <h2 >{isNew ? "New" : "Edit"} ${singularPascalName}</h2>
+      </header>
+      <div >
+        <${singularPascalName}Form ${singularCamelName}={data.${singularCamelName}} onSave={onSave} error={error} loading={loading} />
+      </div>
+    </div>
+  )
+}
+
+export default Edit${singularPascalName}Page
