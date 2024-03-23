@@ -18,7 +18,7 @@ import { db } from 'src/lib/db'
 import { delete${singularPascalName}, puzzle${singularPascalName} } from "../${pluralCamelName}/${pluralCamelName}"
 
 [":${singularCamelName}", {
-    type: "${singularPascalName}",
+    type: "${singularPascalName.toLowerCase()}",
     get: ${singularCamelName},
     delete: delete${singularPascalName},
   }],
@@ -52,7 +52,7 @@ export const create${singularPascalName}: Create${singularPascalName}Resolver = 
   try {
     return db.${singularCamelName}.create({
       data: {
-        id: cuid() + ":${singularCamelName}",
+        id: cuid() + ":${singularCamelName.toLowerCase()}",
         slug: cuid.slug(),
         ...input,
       },
