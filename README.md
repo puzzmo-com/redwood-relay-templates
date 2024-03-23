@@ -1,6 +1,6 @@
 # redwood-relay-templates
 
-Production examples of [generator templates](https://redwoodjs.com/docs/cli-commands#generate-alias-g) for Redwood with:
+Production copies of [generator templates](https://redwoodjs.com/docs/cli-commands#generate-alias-g) for Redwood with:
  
 - Relay for data fetching client-side
 - Conforming to the [Object Identification](https://graphql.org/learn/global-object-identification/) GraphQL pattern
