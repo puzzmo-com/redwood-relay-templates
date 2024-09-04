@@ -1,3 +1,7 @@
+Marking as archived now, as we have fully migrated to not use the Redwood CLI for our apps. All this is still up-to-date as of Redwood 8.x.
+
+---
+
 # redwood-relay-templates
 
 Production copies of [generator templates](https://redwoodjs.com/docs/cli-commands#generate-alias-g) for Redwood with:
